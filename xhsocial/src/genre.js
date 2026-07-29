@@ -9,9 +9,13 @@ function execute() {
       if (name && name.length > 0 && name.length < 60) {
         var cleanName = name.replace(/[^\x20-\x7E]/g, "").trim();
         if (cleanName.length > 0) {
+          var href = links.get(i).attr("href");
+          if (href.indexOf("http") !== 0) {
+            href = "https://xhsocial.com" + href;
+          }
           genres.push({
             title: cleanName,
-            input: "https://xhsocial.com" + links.get(i).attr("href"),
+            input: href,
             script: "search.js"
           });
         }
@@ -19,10 +23,9 @@ function execute() {
     }
 
     if (genres.length > 0) return Response.success(genres);
-  } catch(e) {
-    // Fallback to hardcoded
-  }
+  } catch(e) {}
 
+  // Fallback
   return Response.success([
     { title: "Hentai", input: "https://xhsocial.com/categories/hentai", script: "search.js" },
     { title: "Japanese", input: "https://xhsocial.com/categories/japanese", script: "search.js" },

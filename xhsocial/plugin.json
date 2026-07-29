@@ -2,7 +2,7 @@
   "metadata": {
     "name": "xHSocial",
     "author": "taont-wq",
-    "version": 2,
+    "version": 3,
     "source": "https://xhsocial.com",
     "regexp": "(www\\.)?xhsocial\\.com",
     "description": "Xem video miễn phí trên xHSocial",
