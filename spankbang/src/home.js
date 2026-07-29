@@ -1,29 +1,40 @@
 function execute() {
-  return Response.success([
-    {
-      title: "Hot",
-      input: "https://spankbang.com/new/",
-      script: "search.js"
-    },
-    {
-      title: "Trending",
-      input: "https://spankbang.com/trending/",
-      script: "search.js"
-    },
-    {
-      title: "Best",
-      input: "https://spankbang.com/best/",
-      script: "search.js"
-    },
-    {
-      title: "HD Videos",
-      input: "https://spankbang.com/hd/",
-      script: "search.js"
-    },
-    {
-      title: "VR Videos",
-      input: "https://spankbang.com/vr/",
-      script: "search.js"
+  var BASE = "https://spankbang.com";
+  var doc = fetch(BASE).html();
+  var list = [];
+  var seen = {};
+
+  // Try to find video links on homepage
+  var links = doc.select("a");
+  for (var i = 0; i < links.size(); i++) {
+    var link = links.get(i);
+    var href = link.attr("href");
+    if (!href || href.indexOf("/") !== 0) continue;
+
+    // Check if href matches spankbang video pattern like /xxxxx/video/
+    if (href.match(/^\/[a-z0-9]+\/video\/?$/)) {
+      var fullUrl = BASE + href;
+      if (seen[fullUrl]) continue;
+      seen[fullUrl] = true;
+
+      var img = link.select("img").first();
+      var title = "";
+      var thumb = "";
+      if (img) {
+        title = img.attr("alt");
+        thumb = img.attr("src");
+      }
+      if (!title) title = link.text().trim();
+      if (!title) continue;
+
+      list.push({
+        name: title,
+        link: fullUrl,
+        cover: thumb || "",
+        host: BASE
+      });
     }
-  ]);
+  }
+
+  return Response.success(list);
 }

@@ -1,34 +1,19 @@
 function execute() {
-  return Response.success([
-    {
-      title: "Top Rated",
-      input: "https://www.eporner.com/top-rated/",
-      script: "search.js"
-    },
-    {
-      title: "Most Viewed",
-      input: "https://www.eporner.com/most-viewed/",
-      script: "search.js"
-    },
-    {
-      title: "HD Videos",
-      input: "https://www.eporner.com/hd-porn/",
-      script: "search.js"
-    },
-    {
-      title: "4K Videos",
-      input: "https://www.eporner.com/4k-porn/",
-      script: "search.js"
-    },
-    {
-      title: "VR Porn",
-      input: "https://www.eporner.com/vr-porn/",
-      script: "search.js"
-    },
-    {
-      title: "Longest",
-      input: "https://www.eporner.com/longest/",
-      script: "search.js"
-    }
-  ]);
+  var apiUrl = "https://www.eporner.com/api/v2/video/search/?query=all&per_page=30&order=latest&format=json";
+  var response = fetch(apiUrl);
+  if (!response.ok) return Response.error("Khong the tai danh sach video");
+  var json = response.json();
+  var list = [];
+
+  for (var i = 0; i < json.videos.length; i++) {
+    var v = json.videos[i];
+    list.push({
+      name: v.title,
+      link: v.url,
+      cover: v.default_thumb ? v.default_thumb.src : "",
+      host: "https://www.eporner.com"
+    });
+  }
+
+  return Response.success(list);
 }

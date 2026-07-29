@@ -1,68 +1,26 @@
 function execute(key, page) {
-  page = page || "1";
-  var url = "";
+  if (!page) page = "1";
+  var apiUrl = "https://www.eporner.com/api/v2/video/search/?query=" + key + "&per_page=30&page=" + page + "&order=latest&thumbsize=big&format=json";
+  var response = fetch(apiUrl);
+  if (!response.ok) return Response.error("Khong tim thay ket qua");
+  var json = response.json();
+  var list = [];
 
-  if (key.indexOf("eporner.com") !== -1) {
-    // Browse mode: key is a URL
-    if (page === "1") {
-      url = key;
-    } else {
-      url = key + page + "/";
-    }
-  } else {
-    // Search mode
-    url = "https://www.eporner.com/search/?q=" + key + "&page=" + page;
+  for (var i = 0; i < json.videos.length; i++) {
+    var v = json.videos[i];
+    list.push({
+      name: v.title,
+      link: v.url,
+      cover: v.default_thumb ? v.default_thumb.src : "",
+      host: "https://www.eporner.com"
+    });
   }
 
-  var doc = fetch(url).html();
-  var items = [];
-
-  // Try to find video items on the page
-  var videoLinks = doc.select("a[href*='/vid/']");
-  if (videoLinks && videoLinks.size() > 0) {
-    for (var i = 0; i < videoLinks.size(); i++) {
-      var link = videoLinks.get(i);
-      var href = link.attr("href");
-      if (href && href.length > 0) {
-        if (href.indexOf("http") !== 0) {
-          href = "https://www.eporner.com" + href;
-        }
-
-        var img = link.select("img").first();
-        var imgSrc = "";
-        if (img) {
-          imgSrc = img.attr("data-src");
-          if (!imgSrc) {
-            imgSrc = img.attr("src");
-          }
-          if (!imgSrc) {
-            imgSrc = "";
-          }
-        }
-
-        var title = link.attr("title");
-        if (!title) {
-          title = link.select(".title, .video-title").text();
-        }
-        if (!title) {
-          title = link.text();
-        }
-
-        items.push({
-          name: title,
-          link: href,
-          cover: imgSrc,
-          description: "",
-          host: "https://www.eporner.com"
-        });
-      }
-    }
+  var next = null;
+  var cp = parseInt(page);
+  if (cp < json.total_pages) {
+    next = String(cp + 1);
   }
 
-  if (items.length > 0) {
-    var nextPage = parseInt(page) + 1;
-    return Response.success(items, "" + nextPage);
-  }
-
-  return Response.success(items, "");
+  return Response.success(list, next);
 }

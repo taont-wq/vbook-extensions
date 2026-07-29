@@ -1,38 +1,23 @@
 function execute() {
-  return Response.success([
-    { title: "Anal", input: "https://www.eporner.com/c/anal/", script: "search.js" },
-    { title: "Asian", input: "https://www.eporner.com/c/asian/", script: "search.js" },
-    { title: "Babe", input: "https://www.eporner.com/c/babe/", script: "search.js" },
-    { title: "Big Ass", input: "https://www.eporner.com/c/big-ass/", script: "search.js" },
-    { title: "Big Tits", input: "https://www.eporner.com/c/big-tits/", script: "search.js" },
-    { title: "Blowjob", input: "https://www.eporner.com/c/blowjob/", script: "search.js" },
-    { title: "Brunette", input: "https://www.eporner.com/c/brunette/", script: "search.js" },
-    { title: "Creampie", input: "https://www.eporner.com/c/creampie/", script: "search.js" },
-    { title: "Cumshot", input: "https://www.eporner.com/c/cumshot/", script: "search.js" },
-    { title: "Czech", input: "https://www.eporner.com/c/czech/", script: "search.js" },
-    { title: "Ebony", input: "https://www.eporner.com/c/ebony/", script: "search.js" },
-    { title: "European", input: "https://www.eporner.com/c/european/", script: "search.js" },
-    { title: "Gangbang", input: "https://www.eporner.com/c/gangbang/", script: "search.js" },
-    { title: "Handjob", input: "https://www.eporner.com/c/handjob/", script: "search.js" },
-    { title: "Hardcore", input: "https://www.eporner.com/c/hardcore/", script: "search.js" },
-    { title: "HD Porn", input: "https://www.eporner.com/c/hd-porn/", script: "search.js" },
-    { title: "Hentai", input: "https://www.eporner.com/c/hentai/", script: "search.js" },
-    { title: "Indian", input: "https://www.eporner.com/c/indian/", script: "search.js" },
-    { title: "Interracial", input: "https://www.eporner.com/c/interracial/", script: "search.js" },
-    { title: "Japanese", input: "https://www.eporner.com/c/japanese/", script: "search.js" },
-    { title: "Korean", input: "https://www.eporner.com/c/korean/", script: "search.js" },
-    { title: "Latina", input: "https://www.eporner.com/c/latina/", script: "search.js" },
-    { title: "Lesbian", input: "https://www.eporner.com/c/lesbian/", script: "search.js" },
-    { title: "MILF", input: "https://www.eporner.com/c/milf/", script: "search.js" },
-    { title: "Mature", input: "https://www.eporner.com/c/mature/", script: "search.js" },
-    { title: "POV", input: "https://www.eporner.com/c/pov/", script: "search.js" },
-    { title: "Public", input: "https://www.eporner.com/c/public/", script: "search.js" },
-    { title: "Russian", input: "https://www.eporner.com/c/russian/", script: "search.js" },
-    { title: "Squirt", input: "https://www.eporner.com/c/squirt/", script: "search.js" },
-    { title: "Teen", input: "https://www.eporner.com/c/teen/", script: "search.js" },
-    { title: "Threesome", input: "https://www.eporner.com/c/threesome/", script: "search.js" },
-    { title: "Vietnamese", input: "https://www.eporner.com/c/vietnamese/", script: "search.js" },
-    { title: "Vintage", input: "https://www.eporner.com/c/vintage/", script: "search.js" },
-    { title: "Webcam", input: "https://www.eporner.com/c/webcam/", script: "search.js" }
-  ]);
+  var list = [];
+  list.push({ title: "Mới nhất", input: "latest", script: "gen.js" });
+  list.push({ title: "Xem nhiều nhất", input: "most-popular", script: "gen.js" });
+  list.push({ title: "Top tuần", input: "top-weekly", script: "gen.js" });
+  list.push({ title: "Top tháng", input: "top-monthly", script: "gen.js" });
+  list.push({ title: "Đánh giá cao", input: "top-rated", script: "gen.js" });
+  list.push({ title: "Dài nhất", input: "longest", script: "gen.js" });
+  list.push({ title: "HD 1080p", input: "hd-1080p", script: "gen.js" });
+  list.push({ title: "4K", input: "4k", script: "gen.js" });
+  list.push({ title: "VR", input: "vr-porn", script: "gen.js" });
+  list.push({ title: "Big Dick", input: "big-dick", script: "gen.js" });
+  list.push({ title: "Blowjob", input: "blowjob", script: "gen.js" });
+  list.push({ title: "Creampie", input: "creampie", script: "gen.js" });
+  list.push({ title: "Interracial", input: "interracial", script: "gen.js" });
+  list.push({ title: "Anal", input: "anal", script: "gen.js" });
+  list.push({ title: "Milf", input: "milf", script: "gen.js" });
+  list.push({ title: "Teen", input: "teen", script: "gen.js" });
+  list.push({ title: "Amateur", input: "amateur", script: "gen.js" });
+  list.push({ title: "Japanese", input: "japanese", script: "gen.js" });
+  list.push({ title: "Lesbian", input: "lesbian", script: "gen.js" });
+  return Response.success(list);
 }

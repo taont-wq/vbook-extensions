@@ -1,8 +1,9 @@
-function execute(key, page) {
+function execute(url, page) {
   var BASE = "https://spankbang.com";
-  var reqUrl = BASE + "/s/" + key + "/";
+  var reqUrl = url;
   if (page) {
-    reqUrl = reqUrl + "?page=" + page;
+    if (reqUrl.indexOf("?") !== -1) reqUrl = reqUrl + "&page=" + page;
+    else reqUrl = reqUrl + "?page=" + page;
   }
 
   var doc = fetch(reqUrl).html();
@@ -15,10 +16,12 @@ function execute(key, page) {
     var href = link.attr("href");
     if (!href) continue;
 
+    // Normalize href
     if (href.indexOf("http") !== 0 && href.indexOf("/") === 0) {
       href = BASE + href;
     }
 
+    // Check if it's a video page link
     if (href.match(/https:\/\/spankbang\.com\/[a-z0-9]+\/video\/?/)) {
       if (seen[href]) continue;
       seen[href] = true;
@@ -42,6 +45,7 @@ function execute(key, page) {
     }
   }
 
+  // Find next page number from pagination
   var next = null;
   var paginationLinks = doc.select("a[href*='page=']");
   for (var j = 0; j < paginationLinks.size(); j++) {

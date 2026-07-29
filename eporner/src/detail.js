@@ -1,68 +1,53 @@
 function execute(url) {
   var doc = fetch(url).html();
+  var title = "";
+  var cover = "";
+  var description = "";
+  var duration = "";
 
-  var title = doc.select("h1").text();
-  if (!title || title.length === 0) {
-    title = doc.select("meta[property='og:title']").attr("content");
+  // Get title from h1
+  var h1 = doc.select("h1").first();
+  if (h1) title = h1.text().trim();
+
+  // Get thumbnail from JSON-LD
+  var ldScripts = doc.select("script[type='application/ld+json']");
+  for (var i = 0; i < ldScripts.size(); i++) {
+    try {
+      var ld = JSON.parse(ldScripts.get(i).html());
+      if (ld && ld["@type"] === "VideoObject") {
+        if (!title && ld.name) title = ld.name;
+        if (!cover && ld.thumbnailUrl && ld.thumbnailUrl.length > 0) {
+          cover = ld.thumbnailUrl[ld.thumbnailUrl.length - 1];
+        }
+        if (ld.description) description = ld.description;
+        if (ld.duration) {
+          var d = ld.duration;
+          d = d.replace("PT", "").replace("H", ":").replace("M", ":").replace("S", "");
+          duration = d;
+        }
+        break;
+      }
+    } catch(e) {}
   }
 
-  var cover = doc.select("meta[property='og:image']").attr("content");
-  if (!cover || cover.length === 0) {
-    cover = doc.select("link[rel='image_src']").attr("href");
+  if (!title) {
+    var ogTitle = doc.select("meta[property='og:title']").first();
+    if (ogTitle) title = ogTitle.attr("content");
   }
-
-  var author = "";
-  var channelLink = doc.select("a[href*='/pornstar/'], a[href*='/channel/']").first();
-  if (channelLink) {
-    author = channelLink.text();
+  if (!cover) {
+    var ogImg = doc.select("meta[property='og:image']").first();
+    if (ogImg) cover = ogImg.attr("content");
   }
-
-  var description = doc.select("meta[name='description']").attr("content");
-  if (!description) {
-    description = doc.select("div.video-description, .description").text();
-  }
-
-  var duration = doc.select("meta[property='video:duration']").attr("content");
-  var views = doc.select("span.views, .views-count").text();
-  var rating = doc.select("span.rating, .rating-value").text();
 
   var detail = "";
-  if (views) { detail += "Views: " + views; }
-  if (rating) { detail += " | Rating: " + rating; }
-  if (duration) { detail += " | Duration: " + duration + "s"; }
-
-  // Get tags as genres
-  var genres = [];
-  doc.select("a[href*='/c/'], a[href*='/category/']").forEach(function(el) {
-    var tagName = el.text();
-    tagName = tagName.trim();
-    if (tagName && tagName.length > 0 && tagName.length < 60) {
-      genres.push({
-        title: tagName,
-        input: el.attr("href"),
-        script: "search.js"
-      });
-    }
-  });
-
-  var seen = {};
-  var uniqueGenres = [];
-  for (var i = 0; i < genres.length; i++) {
-    var g = genres[i];
-    if (!seen[g.title]) {
-      seen[g.title] = true;
-      uniqueGenres.push(g);
-    }
-  }
+  if (duration) detail = "Thoi luong: " + duration;
 
   return Response.success({
-    name: title,
-    cover: cover,
-    author: author,
-    description: description,
+    name: title || "EPorner Video",
+    cover: cover || "",
+    author: "EPorner",
+    description: description || title || "",
     detail: detail,
-    host: "https://www.eporner.com",
-    ongoing: true,
-    genres: uniqueGenres
+    host: "https://www.eporner.com"
   });
 }

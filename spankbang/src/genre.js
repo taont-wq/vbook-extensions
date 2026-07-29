@@ -1,36 +1,12 @@
 function execute() {
-  return Response.success([
-    { title: "Anal", input: "https://spankbang.com/s/anal/", script: "search.js" },
-    { title: "Asian", input: "https://spankbang.com/s/asian/", script: "search.js" },
-    { title: "Babe", input: "https://spankbang.com/s/babe/", script: "search.js" },
-    { title: "Big Ass", input: "https://spankbang.com/s/big+ass/", script: "search.js" },
-    { title: "Big Tits", input: "https://spankbang.com/s/big+tits/", script: "search.js" },
-    { title: "Blowjob", input: "https://spankbang.com/s/blowjob/", script: "search.js" },
-    { title: "Brunette", input: "https://spankbang.com/s/brunette/", script: "search.js" },
-    { title: "Compilation", input: "https://spankbang.com/s/compilation/", script: "search.js" },
-    { title: "Creampie", input: "https://spankbang.com/s/creampie/", script: "search.js" },
-    { title: "Cumshot", input: "https://spankbang.com/s/cumshot/", script: "search.js" },
-    { title: "Ebony", input: "https://spankbang.com/s/ebony/", script: "search.js" },
-    { title: "European", input: "https://spankbang.com/s/european/", script: "search.js" },
-    { title: "Gay", input: "https://spankbang.com/s/gay/", script: "search.js" },
-    { title: "Handjob", input: "https://spankbang.com/s/handjob/", script: "search.js" },
-    { title: "Hardcore", input: "https://spankbang.com/s/hardcore/", script: "search.js" },
-    { title: "Hentai", input: "https://spankbang.com/s/hentai/", script: "search.js" },
-    { title: "Indian", input: "https://spankbang.com/s/indian/", script: "search.js" },
-    { title: "Interracial", input: "https://spankbang.com/s/interracial/", script: "search.js" },
-    { title: "Japanese", input: "https://spankbang.com/s/japanese/", script: "search.js" },
-    { title: "Korean", input: "https://spankbang.com/s/korean/", script: "search.js" },
-    { title: "Latina", input: "https://spankbang.com/s/latina/", script: "search.js" },
-    { title: "Lesbian", input: "https://spankbang.com/s/lesbian/", script: "search.js" },
-    { title: "MILF", input: "https://spankbang.com/s/milf/", script: "search.js" },
-    { title: "Mature", input: "https://spankbang.com/s/mature/", script: "search.js" },
-    { title: "POV", input: "https://spankbang.com/s/pov/", script: "search.js" },
-    { title: "Public", input: "https://spankbang.com/s/public/", script: "search.js" },
-    { title: "Russian", input: "https://spankbang.com/s/russian/", script: "search.js" },
-    { title: "Squirt", input: "https://spankbang.com/s/squirt/", script: "search.js" },
-    { title: "Teen", input: "https://spankbang.com/s/teen/", script: "search.js" },
-    { title: "Threesome", input: "https://spankbang.com/s/threesome/", script: "search.js" },
-    { title: "Verified Amateurs", input: "https://spankbang.com/s/verified+amateurs/", script: "search.js" },
-    { title: "Vintage", input: "https://spankbang.com/s/vintage/", script: "search.js" }
-  ]);
+  var BASE = "https://spankbang.com";
+  var list = [];
+  list.push({ title: "Trending", input: BASE + "/s/?filter=trending", script: "gen.js" });
+  list.push({ title: "Mới nhất", input: BASE + "/s/?filter=new", script: "gen.js" });
+  list.push({ title: "Phổ biến", input: BASE + "/s/?filter=popular", script: "gen.js" });
+  list.push({ title: "Nổi bật", input: BASE + "/s/?filter=featured", script: "gen.js" });
+  list.push({ title: "HD", input: BASE + "/s/?quality=hd", script: "gen.js" });
+  list.push({ title: "Full HD", input: BASE + "/s/?quality=fhd", script: "gen.js" });
+  list.push({ title: "4K", input: BASE + "/s/?quality=uhd", script: "gen.js" });
+  return Response.success(list);
 }
