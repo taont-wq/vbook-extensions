@@ -1,13 +1,14 @@
 {
   "metadata": {
     "name": "xHSocial",
-    "author": "vBook User",
-    "version": 1,
+    "author": "taont-wq",
+    "version": 2,
     "source": "https://xhsocial.com",
-    "regexp": "(www.)?xhsocial\\.com",
+    "regexp": "(www\\.)?xhsocial\\.com",
     "description": "Xem video miễn phí trên xHSocial",
     "locale": "vi_VN",
-    "type": "video"
+    "type": "video",
+    "language": "javascript"
   },
   "script": {
     "home": "home.js",
@@ -15,6 +16,7 @@
     "search": "search.js",
     "detail": "detail.js",
     "toc": "toc.js",
+    "chap": "chap.js",
     "track": "track.js"
   }
 }
