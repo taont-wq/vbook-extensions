@@ -2,9 +2,9 @@
   "metadata": {
     "name": "SpankBang",
     "author": "taont-wq",
-    "version": 1,
+    "version": 2,
     "source": "https://spankbang.com",
-    "regexp": "spankbang.com/.*",
+    "regexp": "spankbang\\.com/.*",
     "description": "Xem video tren SpankBang (can VPN de truy cap)",
     "locale": "vi_VN",
     "type": "video",
@@ -13,7 +13,6 @@
   "script": {
     "home": "home.js",
     "genre": "genre.js",
-    "gen": "gen.js",
     "search": "search.js",
     "detail": "detail.js",
     "toc": "toc.js",

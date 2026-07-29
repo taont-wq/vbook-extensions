@@ -1,55 +1,22 @@
-var BASE = "https://www.eporner.com";
-
 function execute(key, page) {
   if (!page) page = "1";
-  var url = BASE + "/search?q=" + key;
-  if (page !== "1") {
-    url = url + "&page=" + page;
-  }
-
-  var doc;
-  try {
-    doc = fetch(url).html();
-  } catch(e) {
-    return Response.success([], null);
-  }
-
+  var reqUrl = "https://www.eporner.com/api/v2/video/search/?query=" + key + "&per_page=30&page=" + page + "&order=latest&format=json";
+  var response = fetch(reqUrl);
+  if (!response.ok) return Response.success([], null);
+  var json = response.json();
   var list = [];
-  var seen = {};
 
-  var links = doc.select("a[href*='/video-']");
-  for (var i = 0; i < links.size(); i++) {
-    var link = links.get(i);
-    var href = link.attr("href");
-    if (!href || href.indexOf("/video-") !== 0) continue;
-    if (seen[href]) continue;
-    seen[href] = true;
-
-    var img = link.select("img").first();
-    var title = "";
-    var thumb = "";
-    if (img) {
-      title = img.attr("alt");
-      thumb = img.attr("src");
-    }
-    if (!title) title = link.text().trim();
-    if (!title) continue;
-
+  for (var i = 0; i < json.videos.length; i++) {
+    var v = json.videos[i];
     list.push({
-      name: title,
-      link: BASE + href,
-      cover: thumb || "",
-      host: BASE
+      name: v.title,
+      link: v.url,
+      cover: v.default_thumb ? v.default_thumb.src : "",
+      host: "https://www.eporner.com"
     });
   }
 
-  // Pagination
-  var next = null;
-  var nextPage = parseInt(page) + 1;
-  var pagers = doc.select("a[href*='page=" + nextPage + "']");
-  if (pagers.size() > 0) {
-    next = String(nextPage);
-  }
-
+  var next = parseInt(page) + 1;
+  if (next > json.total_pages) next = null;
   return Response.success(list, next);
 }

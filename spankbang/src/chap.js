@@ -1,61 +1,65 @@
 function execute(url) {
-  var doc = fetch(url).html();
+  var response = fetch(url);
+  if (!response.ok) {
+    var tracks = [];
+    tracks.push({title: "Full Video", data: url});
+    return Response.success(tracks);
+  }
+  var html = response.text();
   var videoSrc = "";
 
-  // Try JSON-LD
-  var ldScripts = doc.select("script[type='application/ld+json']");
-  for (var i = 0; i < ldScripts.size(); i++) {
+  // Try JSON-LD first
+  var jsonLdRegex = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/i;
+  var ldMatch = html.match(jsonLdRegex);
+  if (ldMatch) {
     try {
-      var ld = JSON.parse(ldScripts.get(i).html());
-      if (ld && ld.contentUrl) {
-        videoSrc = ld.contentUrl;
-        break;
+      var ld = JSON.parse(ldMatch[1]);
+      if (ld && (ld.contentUrl || ld.url)) {
+        videoSrc = ld.contentUrl || ld.url;
       }
     } catch(e) {}
   }
 
-  // Try <video> source tags
+  // Try to find mp4 URLs in the page
   if (!videoSrc) {
-    var sources = doc.select("video source");
-    if (sources.size() > 0) {
-      videoSrc = sources.first().attr("src");
+    var mp4Regex = /https?:\/\/[^"'\s<]*\.mp4[^"'\s<]*/g;
+    var matches = html.match(mp4Regex);
+    if (matches && matches.length > 0) videoSrc = matches[0];
+  }
+
+  // Try m3u8 URLs
+  if (!videoSrc) {
+    var m3u8Regex = /https?:\/\/[^"'\s<]*\.m3u8[^"'\s<]*/g;
+    var m3u8Matches = html.match(m3u8Regex);
+    if (m3u8Matches && m3u8Matches.length > 0) videoSrc = m3u8Matches[0];
+  }
+
+  // Try to find in JS variables
+  if (!videoSrc) {
+    var srcRegex = /["'](?:src|file|url|source|video_url)["']\s*:\s*["'](https?:\/\/[^"']+)["']/gi;
+    var srcMatch = html.match(srcRegex);
+    if (srcMatch) {
+      var extracted = srcMatch[0].match(/["'](https?:\/\/[^"']+)["']/);
+      if (extracted) videoSrc = extracted[1];
     }
   }
 
-  // Try video tag directly
+  // Try <video> element as last resort
   if (!videoSrc) {
-    var video = doc.select("video").first();
-    if (video) videoSrc = video.attr("src");
-  }
-
-  // Try script tags with video config
-  if (!videoSrc) {
-    var scripts = doc.select("script");
-    var html = doc.html();
-
-    // Look for mp4 URLs in the page
-    var mp4Match = html.match(/https?:[^"']*\.mp4[^"'\s]*/);
-    if (mp4Match) videoSrc = mp4Match[0];
-
-    // Look for m3u8 URLs
-    if (!videoSrc) {
-      var m3u8Match = html.match(/https?:[^"']*\.m3u8[^"'\s]*/);
-      if (m3u8Match) videoSrc = m3u8Match[0];
+    var doc = fetch(url).html();
+    var videoTags = doc.select("video source");
+    if (videoTags.size() > 0) {
+      videoSrc = videoTags.first().attr("src");
     }
-
-    // Look for sources/file in JavaScript objects
     if (!videoSrc) {
-      var srcMatch = html.match(/["'](?:src|file|url|source)["']\s*:\s*["'](https?:[^"']+)["']/);
-      if (srcMatch) videoSrc = srcMatch[1];
+      var videoTag = doc.select("video").first();
+      if (videoTag) videoSrc = videoTag.attr("src");
     }
   }
 
   if (!videoSrc) videoSrc = url;
 
   var tracks = [];
-  tracks.push({
-    title: "Full Video",
-    data: videoSrc
-  });
+  tracks.push({title: "Full Video", data: videoSrc});
   return Response.success(tracks);
 }

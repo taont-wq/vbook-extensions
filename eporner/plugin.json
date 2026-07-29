@@ -2,9 +2,9 @@
   "metadata": {
     "name": "EPorner",
     "author": "taont-wq",
-    "version": 1,
+    "version": 2,
     "source": "https://www.eporner.com",
-    "regexp": "eporner.com/.*",
+    "regexp": "eporner\\.com/.*",
     "description": "Xem video HD tren EPorner",
     "locale": "vi_VN",
     "type": "video",
