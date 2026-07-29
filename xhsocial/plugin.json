@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "name": "xHSocial",
+    "author": "vBook User",
+    "version": 1,
+    "source": "https://xhsocial.com",
+    "regexp": "(www.)?xhsocial\\.com",
+    "description": "Xem video miễn phí trên xHSocial",
+    "locale": "vi_VN",
+    "type": "video"
+  },
+  "script": {
+    "home": "home.js",
+    "genre": "genre.js",
+    "search": "search.js",
+    "detail": "detail.js",
+    "toc": "toc.js",
+    "track": "track.js"
+  }
+}
