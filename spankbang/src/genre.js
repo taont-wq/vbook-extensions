@@ -1,7 +1,7 @@
 function execute() {
   var BASE = "https://spankbang.com";
   var list = [];
-  list.push({ title: "Trending", input: BASE + "/s/?filter=trending", script: "gen.js" });
+  list.push({ title: "Xu hướng", input: BASE + "/s/?filter=trending", script: "gen.js" });
   list.push({ title: "Mới nhất", input: BASE + "/s/?filter=new", script: "gen.js" });
   list.push({ title: "Phổ biến", input: BASE + "/s/?filter=popular", script: "gen.js" });
   list.push({ title: "Nổi bật", input: BASE + "/s/?filter=featured", script: "gen.js" });

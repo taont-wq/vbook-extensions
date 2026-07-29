@@ -1,28 +1,46 @@
+var BASE = "https://spankbang.com";
+
 function execute(url, page) {
-  var BASE = "https://spankbang.com";
   var reqUrl = url;
   if (page) {
     if (reqUrl.indexOf("?") !== -1) reqUrl = reqUrl + "&page=" + page;
     else reqUrl = reqUrl + "?page=" + page;
   }
 
-  var doc = fetch(reqUrl).html();
+  var doc;
+  try {
+    doc = fetch(reqUrl).html();
+  } catch(e) {
+    // Cloudflare block or other error - return empty
+    return Response.success([], null);
+  }
+
   var list = [];
   var seen = {};
 
-  var links = doc.select("a");
-  for (var i = 0; i < links.size(); i++) {
-    var link = links.get(i);
-    var href = link.attr("href");
-    if (!href) continue;
+  // Try multiple selectors for video links
+  var selectors = [
+    "a[href*='/video/']",
+    "a[href*='spankbang.com/']",
+    ".video-item a",
+    "a img"
+  ];
 
-    // Normalize href
-    if (href.indexOf("http") !== 0 && href.indexOf("/") === 0) {
-      href = BASE + href;
-    }
+  for (var s = 0; s < selectors.length; s++) {
+    var links = doc.select(selectors[s]);
+    for (var i = 0; i < links.size(); i++) {
+      var link = links.get(i);
+      var href = link.attr("href");
+      if (!href) continue;
 
-    // Check if it's a video page link
-    if (href.match(/https:\/\/spankbang\.com\/[a-z0-9]+\/video\/?/)) {
+      // Normalize relative URLs
+      if (href.indexOf("http") !== 0 && href.indexOf("/") === 0) {
+        href = BASE + href;
+      }
+
+      // Check if it's a video page link (spankbang.com/XXXX/video/)
+      var vidMatch = href.match(/https:\/\/spankbang\.com\/([a-z0-9]+)\/video\/?/);
+      if (!vidMatch) continue;
       if (seen[href]) continue;
       seen[href] = true;
 
@@ -43,29 +61,15 @@ function execute(url, page) {
         host: BASE
       });
     }
+    if (list.length > 0) break;
   }
 
-  // Find next page number from pagination
+  // Pagination
   var next = null;
-  var paginationLinks = doc.select("a[href*='page=']");
-  for (var j = 0; j < paginationLinks.size(); j++) {
-    var pl = paginationLinks.get(j);
-    var ph = pl.attr("href");
-    if (ph) {
-      var idx = ph.indexOf("page=");
-      if (idx !== -1) {
-        var pn = ph.substring(idx + 5);
-        var amp = pn.indexOf("&");
-        if (amp !== -1) pn = pn.substring(0, amp);
-        if (pn && !isNaN(pn)) {
-          var currentPage = page ? parseInt(page) : 1;
-          if (parseInt(pn) === currentPage + 1) {
-            next = pn;
-            break;
-          }
-        }
-      }
-    }
+  var nextPage = page ? parseInt(page) + 1 : 2;
+  var pagers = doc.select("a[href*='page=" + nextPage + "']");
+  if (pagers.size() > 0) {
+    next = String(nextPage);
   }
 
   return Response.success(list, next);

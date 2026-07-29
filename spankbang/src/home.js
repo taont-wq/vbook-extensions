@@ -1,40 +1,13 @@
 function execute() {
   var BASE = "https://spankbang.com";
-  var doc = fetch(BASE).html();
   var list = [];
-  var seen = {};
 
-  // Try to find video links on homepage
-  var links = doc.select("a");
-  for (var i = 0; i < links.size(); i++) {
-    var link = links.get(i);
-    var href = link.attr("href");
-    if (!href || href.indexOf("/") !== 0) continue;
-
-    // Check if href matches spankbang video pattern like /xxxxx/video/
-    if (href.match(/^\/[a-z0-9]+\/video\/?$/)) {
-      var fullUrl = BASE + href;
-      if (seen[fullUrl]) continue;
-      seen[fullUrl] = true;
-
-      var img = link.select("img").first();
-      var title = "";
-      var thumb = "";
-      if (img) {
-        title = img.attr("alt");
-        thumb = img.attr("src");
-      }
-      if (!title) title = link.text().trim();
-      if (!title) continue;
-
-      list.push({
-        name: title,
-        link: fullUrl,
-        cover: thumb || "",
-        host: BASE
-      });
-    }
-  }
-
+  // Use browse mode via gen.js with pre-defined URLs
+  list.push({ title: "Xu hướng", input: BASE + "/s/?filter=trending", script: "gen.js" });
+  list.push({ title: "Mới nhất", input: BASE + "/s/?filter=new", script: "gen.js" });
+  list.push({ title: "Phổ biến", input: BASE + "/s/?filter=popular", script: "gen.js" });
+  list.push({ title: "HD", input: BASE + "/s/?quality=hd", script: "gen.js" });
+  list.push({ title: "Full HD", input: BASE + "/s/?quality=fhd", script: "gen.js" });
+  list.push({ title: "4K", input: BASE + "/s/?quality=uhd", script: "gen.js" });
   return Response.success(list);
 }

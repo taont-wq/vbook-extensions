@@ -1,40 +1,53 @@
-function execute(input, page) {
-  if (!page) page = "1";
+var BASE = "https://www.eporner.com";
 
-  var query = input;
-  var order = "latest";
-
-  // If input is a known sort order, query all videos
-  var sorts = ["latest", "most-popular", "top-weekly", "top-monthly", "top-rated", "longest"];
-  for (var i = 0; i < sorts.length; i++) {
-    if (input === sorts[i]) {
-      query = "all";
-      order = input;
-      break;
+function execute(url, page) {
+  var reqUrl = url;
+  if (page) {
+    // Strip trailing slash, append /page/
+    if (reqUrl.charAt(reqUrl.length - 1) === "/") {
+      reqUrl = reqUrl + page + "/";
+    } else {
+      reqUrl = reqUrl + "/" + page + "/";
     }
   }
 
-  var apiUrl = "https://www.eporner.com/api/v2/video/search/?query=" + query + "&per_page=30&page=" + page + "&order=" + order + "&thumbsize=big&format=json";
-  var response = fetch(apiUrl);
-  if (!response.ok) return Response.error("Khong the tai danh sach");
-  var json = response.json();
-  var list = [];
+  var doc;
+  try {
+    doc = fetch(reqUrl).html();
+  } catch(e) {
+    return Response.success([], null);
+  }
 
-  for (var i2 = 0; i2 < json.videos.length; i2++) {
-    var v = json.videos[i2];
+  var list = [];
+  var seen = {};
+
+  var links = doc.select("a[href*='/video-']");
+  for (var i = 0; i < links.size(); i++) {
+    var link = links.get(i);
+    var href = link.attr("href");
+    if (!href || href.indexOf("/video-") !== 0) continue;
+    if (seen[href]) continue;
+    seen[href] = true;
+
+    var img = link.select("img").first();
+    var title = "";
+    var thumb = "";
+    if (img) {
+      title = img.attr("alt");
+      thumb = img.attr("src");
+    }
+    if (!title) title = link.text().trim();
+    if (!title) continue;
+
     list.push({
-      name: v.title,
-      link: v.url,
-      cover: v.default_thumb ? v.default_thumb.src : "",
-      host: "https://www.eporner.com"
+      name: title,
+      link: BASE + href,
+      cover: thumb || "",
+      host: BASE
     });
   }
 
-  var next = null;
-  var cp = parseInt(page);
-  if (cp < json.total_pages) {
-    next = String(cp + 1);
-  }
-
+  // Simple pagination: always return next page number
+  var next = page ? String(parseInt(page) + 1) : "2";
   return Response.success(list, next);
 }

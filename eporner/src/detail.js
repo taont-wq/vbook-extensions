@@ -5,19 +5,36 @@ function execute(url) {
   var description = "";
   var duration = "";
 
-  // Get title from h1
-  var h1 = doc.select("h1").first();
-  if (h1) title = h1.text().trim();
+  // Prefer og:title (clean title without extra spans)
+  var ogTitle = doc.select("meta[property='og:title']").first();
+  if (ogTitle) title = ogTitle.attr("content");
+  if (title && title.indexOf(" - EPORNER") > 0) {
+    title = title.replace(" - EPORNER", "");
+  }
 
-  // Get thumbnail from JSON-LD
+  if (!title) {
+    var h1 = doc.select("h1").first();
+    if (h1) title = h1.text().trim();
+  }
+
+  // Get thumbnail from JSON-LD (highest quality)
   var ldScripts = doc.select("script[type='application/ld+json']");
   for (var i = 0; i < ldScripts.size(); i++) {
     try {
       var ld = JSON.parse(ldScripts.get(i).html());
       if (ld && ld["@type"] === "VideoObject") {
-        if (!title && ld.name) title = ld.name;
         if (!cover && ld.thumbnailUrl && ld.thumbnailUrl.length > 0) {
-          cover = ld.thumbnailUrl[ld.thumbnailUrl.length - 1];
+          // Pick the largest thumbnail (usually the last one or imggen)
+          for (var t = ld.thumbnailUrl.length - 1; t >= 0; t--) {
+            var url_t = ld.thumbnailUrl[t];
+            if (url_t.indexOf("imggen") > 0) {
+              cover = url_t;
+              break;
+            }
+          }
+          if (!cover) {
+            cover = ld.thumbnailUrl[ld.thumbnailUrl.length - 1];
+          }
         }
         if (ld.description) description = ld.description;
         if (ld.duration) {
@@ -30,10 +47,6 @@ function execute(url) {
     } catch(e) {}
   }
 
-  if (!title) {
-    var ogTitle = doc.select("meta[property='og:title']").first();
-    if (ogTitle) title = ogTitle.attr("content");
-  }
   if (!cover) {
     var ogImg = doc.select("meta[property='og:image']").first();
     if (ogImg) cover = ogImg.attr("content");
