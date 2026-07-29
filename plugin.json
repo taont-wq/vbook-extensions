@@ -3,5 +3,17 @@
     "author": "taont-wq",
     "description": "Vbook extensions by taont-wq"
   },
-  "data": []
+  "data": [
+    {
+      "name": "xHSocial",
+      "author": "taont-wq",
+      "path": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/xhsocial/plugin.zip",
+      "version": 1,
+      "source": "https://xhsocial.com",
+      "icon": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/xhsocial/icon.png",
+      "description": "Xem video miễn phí trên xHSocial",
+      "locale": "vi_VN",
+      "type": "video"
+    }
+  ]
 }
