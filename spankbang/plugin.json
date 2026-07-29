@@ -4,7 +4,7 @@
     "author": "taont-wq",
     "version": 1,
     "source": "https://spankbang.com",
-    "regexp": "(www\\.)?spankbang\\.com/.*",
+    "regexp": "spankbang.com/.*",
     "description": "Xem video tren SpankBang",
     "locale": "vi_VN",
     "type": "video",

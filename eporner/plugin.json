@@ -4,7 +4,7 @@
     "author": "taont-wq",
     "version": 1,
     "source": "https://www.eporner.com",
-    "regexp": "(www\\.)?eporner\\.com/.*",
+    "regexp": "eporner.com/.*",
     "description": "Xem video HD tren EPorner",
     "locale": "vi_VN",
     "type": "video",
