@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "name": "EPorner",
+    "author": "taont-wq",
+    "version": 1,
+    "source": "https://www.eporner.com",
+    "regexp": "(www.)?eporner\\.com/.*",
+    "description": "Xem video HD trên EPorner",
+    "locale": "en_US",
+    "type": "video",
+    "language": "javascript"
+  },
+  "script": {
+    "home": "home.js",
+    "genre": "genre.js",
+    "search": "search.js",
+    "detail": "detail.js",
+    "toc": "toc.js",
+    "track": "track.js"
+  }
+}

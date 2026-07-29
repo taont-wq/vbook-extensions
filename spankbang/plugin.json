@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "name": "SpankBang",
+    "author": "taont-wq",
+    "version": 1,
+    "source": "https://spankbang.com",
+    "regexp": "(www.)?spankbang\\.com/.*",
+    "description": "Xem video trên SpankBang",
+    "locale": "en_US",
+    "type": "video",
+    "language": "javascript"
+  },
+  "script": {
+    "home": "home.js",
+    "genre": "genre.js",
+    "search": "search.js",
+    "detail": "detail.js",
+    "toc": "toc.js",
+    "track": "track.js"
+  }
+}

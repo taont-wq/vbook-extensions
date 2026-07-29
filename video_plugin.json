@@ -14,6 +14,28 @@
       "description": "Xem video miễn phí trên xHSocial",
       "locale": "vi_VN",
       "type": "video"
+    },
+    {
+      "name": "EPorner",
+      "author": "taont-wq",
+      "path": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/eporner/plugin.zip",
+      "version": 1,
+      "source": "https://www.eporner.com",
+      "icon": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/eporner/icon.png",
+      "description": "Xem video HD trên EPorner",
+      "locale": "en_US",
+      "type": "video"
+    },
+    {
+      "name": "SpankBang",
+      "author": "taont-wq",
+      "path": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/spankbang/plugin.zip",
+      "version": 1,
+      "source": "https://spankbang.com",
+      "icon": "https://raw.githubusercontent.com/taont-wq/vbook-extensions/master/spankbang/icon.png",
+      "description": "Xem video trên SpankBang",
+      "locale": "en_US",
+      "type": "video"
     }
   ]
 }
