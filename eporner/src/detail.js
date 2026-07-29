@@ -11,7 +11,11 @@ function execute(url) {
     cover = doc.select("link[rel='image_src']").attr("href");
   }
 
-  var author = doc.select("a[href*='/pornstar/'], a[href*='/channel/']").first()?.text() || "";
+  var author = "";
+  var channelLink = doc.select("a[href*='/pornstar/'], a[href*='/channel/']").first();
+  if (channelLink) {
+    author = channelLink.text();
+  }
 
   var description = doc.select("meta[name='description']").attr("content");
   if (!description) {
@@ -23,14 +27,15 @@ function execute(url) {
   var rating = doc.select("span.rating, .rating-value").text();
 
   var detail = "";
-  if (views) detail += "Views: " + views;
-  if (rating) detail += " | Rating: " + rating;
-  if (duration) detail += " | Duration: " + duration + "s";
+  if (views) { detail += "Views: " + views; }
+  if (rating) { detail += " | Rating: " + rating; }
+  if (duration) { detail += " | Duration: " + duration + "s"; }
 
   // Get tags as genres
   var genres = [];
   doc.select("a[href*='/c/'], a[href*='/category/']").forEach(function(el) {
-    var tagName = el.text().trim();
+    var tagName = el.text();
+    tagName = tagName.trim();
     if (tagName && tagName.length > 0 && tagName.length < 60) {
       genres.push({
         title: tagName,
@@ -42,12 +47,13 @@ function execute(url) {
 
   var seen = {};
   var uniqueGenres = [];
-  genres.forEach(function(g) {
+  for (var i = 0; i < genres.length; i++) {
+    var g = genres[i];
     if (!seen[g.title]) {
       seen[g.title] = true;
       uniqueGenres.push(g);
     }
-  });
+  }
 
   return Response.success({
     name: title,

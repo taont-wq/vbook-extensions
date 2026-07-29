@@ -5,10 +5,9 @@
     "version": 1,
     "source": "https://spankbang.com",
     "regexp": "(www.)?spankbang\\.com/.*",
-    "description": "Xem video trên SpankBang",
-    "locale": "en_US",
-    "type": "video",
-    "language": "javascript"
+    "description": "Xem video tren SpankBang",
+    "locale": "vi_VN",
+    "type": "video"
   },
   "script": {
     "home": "home.js",

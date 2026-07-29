@@ -23,14 +23,35 @@ function execute(url) {
   var scripts = doc.select("script");
   for (var i = 0; i < scripts.size(); i++) {
     var text = scripts.get(i).html();
-    if (text && (text.indexOf(".mp4") !== -1 || text.indexOf(".m3u8") !== -1)) {
-      var mp4Match = text.match(/https?:[^"']*\.mp4[^"']*/);
-      if (mp4Match) {
-        return Response.success(mp4Match[0]);
+    if (text && text.length > 0) {
+      if (text.indexOf(".mp4") !== -1) {
+        var mp4Pos = text.indexOf(".mp4");
+        // Search backwards for http
+        var startPos = mp4Pos - 1;
+        while (startPos >= 0 && text.charAt(startPos) !== '"' && text.charAt(startPos) !== "'") {
+          startPos--;
+        }
+        if (startPos >= 0) {
+          startPos++;
+          var mp4Url = text.substring(startPos, mp4Pos + 4);
+          if (mp4Url.indexOf("http") === 0) {
+            return Response.success(mp4Url);
+          }
+        }
       }
-      var m3u8Match = text.match(/https?:[^"']*\.m3u8[^"']*/);
-      if (m3u8Match) {
-        return Response.success(m3u8Match[0]);
+      if (text.indexOf(".m3u8") !== -1) {
+        var m3u8Pos = text.indexOf(".m3u8");
+        var startPos = m3u8Pos - 1;
+        while (startPos >= 0 && text.charAt(startPos) !== '"' && text.charAt(startPos) !== "'") {
+          startPos--;
+        }
+        if (startPos >= 0) {
+          startPos++;
+          var m3u8Url = text.substring(startPos, m3u8Pos + 5);
+          if (m3u8Url.indexOf("http") === 0) {
+            return Response.success(m3u8Url);
+          }
+        }
       }
     }
   }
@@ -39,29 +60,29 @@ function execute(url) {
   var vidId = "";
   var idMatch = url.match(/\/vid\/([^\/]+)/);
   if (idMatch) {
-    vidId = idMatch[1].split("-")[0];
+    var parts = idMatch[1].split("-");
+    vidId = parts[0];
   }
 
   if (vidId) {
     var apiUrl = "https://www.eporner.com/api/v2/video/id/?id=" + vidId;
-    var apiDoc = fetch(apiUrl).html();
-    if (apiDoc) {
-      var apiText = apiDoc.text();
-      try {
-        var apiJson = JSON.parse(apiText);
-        if (apiJson && apiJson.video) {
-          // Try to find the highest quality video
-          var qualities = ["1440p", "1080p", "720p", "480p", "360p"];
+    var apiResponse = fetch(apiUrl);
+    if (apiResponse && apiResponse.ok) {
+      var apiJson = apiResponse.json();
+      if (apiJson) {
+        var video = apiJson.video;
+        if (video) {
+          var qualities = ["1080p", "720p", "480p", "360p"];
           for (var q = 0; q < qualities.length; q++) {
             var key = "url_" + qualities[q];
-            if (apiJson.video[key]) {
-              return Response.success(apiJson.video[key]);
+            if (video[key]) {
+              return Response.success(video[key]);
             }
           }
         }
-      } catch(e) {}
+      }
     }
   }
 
-  return Response.error("Không tìm thấy nguồn video");
+  return Response.error("Khong tim thay nguon video");
 }

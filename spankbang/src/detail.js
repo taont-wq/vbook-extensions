@@ -11,7 +11,11 @@ function execute(url) {
     cover = doc.select("link[rel='image_src']").attr("href");
   }
 
-  var author = doc.select("a[href*='/profile/'], a[href*='/uploader/'], a.author").first()?.text() || "";
+  var author = "";
+  var uploader = doc.select("a[href*='/profile/'], a[href*='/uploader/'], a.author").first();
+  if (uploader) {
+    author = uploader.text();
+  }
 
   var description = doc.select("meta[name='description']").attr("content");
   if (!description) {
@@ -21,13 +25,17 @@ function execute(url) {
   // Get tags as genres
   var genres = [];
   doc.select("a[href*='/s/'], a.tag, a[href*='/tag/']").forEach(function(el) {
-    var tagName = el.text().trim();
+    var tagName = el.text();
+    tagName = tagName.trim();
     if (tagName && tagName.length > 0 && tagName.length < 60) {
-      // Skip generic navigation
       if (tagName.indexOf(" ") === -1 || tagName.length < 30) {
+        var href = el.attr("href");
+        if (href && href.indexOf("/") === 0) {
+          href = "https://spankbang.com" + href;
+        }
         genres.push({
           title: tagName,
-          input: "https://spankbang.com" + el.attr("href"),
+          input: href,
           script: "search.js"
         });
       }
@@ -36,21 +44,30 @@ function execute(url) {
 
   var seen = {};
   var uniqueGenres = [];
-  genres.forEach(function(g) {
+  for (var i = 0; i < genres.length; i++) {
+    var g = genres[i];
     if (!seen[g.title]) {
       seen[g.title] = true;
       uniqueGenres.push(g);
     }
-  });
+  }
 
   // Get related videos
   var suggests = [];
-  doc.select("a[href*='/v/']").forEach(function(el) {
+  var videoLinks = doc.select("a[href*='/v/']");
+  for (var i = 0; i < videoLinks.size(); i++) {
+    var el = videoLinks.get(i);
     var href = el.attr("href");
-    if (href && href.indexOf("http") !== 0) {
+    if (href && href.indexOf("/") === 0) {
       href = "https://spankbang.com" + href;
     }
-    var name = el.text() || el.attr("title") || "";
+    var name = el.text();
+    if (!name) {
+      name = el.attr("title");
+    }
+    if (!name) {
+      name = "";
+    }
     if (name && name.length > 0 && name.length < 100) {
       suggests.push({
         name: name,
@@ -58,16 +75,21 @@ function execute(url) {
         host: "https://spankbang.com"
       });
     }
-  });
+  }
 
   var seenSugg = {};
   var uniqueSugg = [];
-  suggests.forEach(function(s) {
+  for (var i = 0; i < suggests.length; i++) {
+    var s = suggests[i];
     if (!seenSugg[s.link]) {
       seenSugg[s.link] = true;
       uniqueSugg.push(s);
     }
-  });
+  }
+
+  if (uniqueSugg.length > 20) {
+    uniqueSugg = uniqueSugg.slice(0, 20);
+  }
 
   return Response.success({
     name: title,
@@ -77,6 +99,6 @@ function execute(url) {
     host: "https://spankbang.com",
     ongoing: true,
     genres: uniqueGenres,
-    suggests: uniqueSugg.slice(0, 20)
+    suggests: uniqueSugg
   });
 }
